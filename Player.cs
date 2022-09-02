@@ -5,56 +5,46 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     [SerializeField] private Slider _healthBar;
-    
-    private UnityEvent _healthChanged = new UnityEvent();
-    private float Health;
-    private float maxHealth = 100;
-    private float minHealth = 0;
 
-    public event UnityAction HealthChanged
-    {
-        add => _healthChanged.AddListener(value);
-        remove => _healthChanged.RemoveListener(value);
-    }
+    private UnityEvent _chandedHealth;
+    private float _health;
+    private float _maxHealth = 100;
+    private float _minHealth = 0;
 
     private void Start()
     {
-        Health = maxHealth;
+        _health = _maxHealth;
         SendValueHealthToBar();
     }
 
-    private void OnEnable()
+    public event UnityAction ChandedHealth
     {
-        HealthChanged += SendValueHealthToBar;
-    }
-
-    private void OnDisable()
-    {
-        HealthChanged -= SendValueHealthToBar;
+        add => _chandedHealth.AddListener(value);
+        remove => _chandedHealth.RemoveListener(value);
     }
 
     private void SendValueHealthToBar()
     {
-        _healthBar.GetComponent<ChangeSliderValue>().SetTargetValue(Health);
+        _healthBar.GetComponent<SetterSliderValue>().SetTargetValue(_health);
     }
 
-    public void ReduceHealth(float value)
+    public void Heal(float value)
     {
-        Health -= value;
+        _health -= value;
         
-        if (Health < minHealth)
-            Health = minHealth;
+        if (_health < _minHealth)
+            _health = _minHealth;
 
-        _healthChanged?.Invoke();
+        SendValueHealthToBar();
     }
 
-    public void IncreaseHealth(float value)
+    public void Damage(float value)
     {
-        Health += value;
+        _health += value;
 
-        if (Health >= maxHealth)
-            Health = maxHealth;
+        if (_health >= _maxHealth)
+            _health = _maxHealth;
 
-        _healthChanged?.Invoke();
+        SendValueHealthToBar();
     }
 }
