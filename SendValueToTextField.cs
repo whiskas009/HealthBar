@@ -14,10 +14,15 @@ public class SendValueToTextField : MonoBehaviour
     private void Start()
     {
         _slider = GetComponent<Slider>();
-        _textField.text = _slider.value.ToString();
+        SetValue();
     }
 
     public void Change()
+    {
+        SetValue();
+    }
+
+    private void SetValue()
     {
         _textField.text = Mathf.Round(_slider.value).ToString();
     }
