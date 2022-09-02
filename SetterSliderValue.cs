@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Collections;
 
 [RequireComponent(typeof(Slider))]
 public class SetterSliderValue : MonoBehaviour
@@ -18,12 +19,12 @@ public class SetterSliderValue : MonoBehaviour
 
     private void OnEnable()
     {
-        _player.ChandedHealth += Change;
+        _player.ChandedHealth += StartChangeCoroutine;
     }
 
     private void OnDisable()
     {
-        _player.ChandedHealth -= Change;
+        _player.ChandedHealth -= StartChangeCoroutine;
     }
 
     public void SetTargetValue(float value)
@@ -31,11 +32,22 @@ public class SetterSliderValue : MonoBehaviour
         _targetValue = value;
     }
 
-    private void Change()
+    private void StartChangeCoroutine()
     {
-        if (_slider.value != _targetValue)
+        if (Change() != null)
+        {
+            StartCoroutine(Change());
+        }
+    }
+    
+    private IEnumerator Change()
+    {
+        while (_slider.value != _targetValue)
         {
             _slider.value = Mathf.MoveTowards(_slider.value, _targetValue, _speedChange * Time.deltaTime);
+            yield return null;
         }
-    } 
+
+        StopCoroutine(Change());
+    }
 }
